@@ -95,6 +95,13 @@ class TxList extends Component {
           this.loadData()
         }, 60000)
       })
+    }).catch((e) => {
+      console.warn(e)
+      
+      this.listUpdater = setTimeout(() => {
+        this.listUpdater = null
+        this.loadData()
+      }, 60000)
     })
   }
   

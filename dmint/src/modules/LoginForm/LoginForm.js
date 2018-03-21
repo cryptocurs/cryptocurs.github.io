@@ -84,7 +84,8 @@ class LoginForm extends Component {
           storage.get().set(res)
         })
         .catch((e) => {
-          storage.get().set({ apiError: e })
+          // storage.get().set({ apiError: e })
+          console.warn(e)
         })
       })
     }

@@ -38,7 +38,7 @@ class Api {
               console.warn('Net error, attempt #' + (attempts + 2))
               setTimeout(() => resolve(this.call(path, returnError, attempts + 1)), 5000)
             } else {
-              storage.get().set({ apiError: e })
+              // storage.get().set({ apiError: e })
               reject(e)
             }
           }

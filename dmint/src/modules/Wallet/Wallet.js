@@ -66,6 +66,9 @@ class Wallet extends Component {
           .then(({ txReceipt }) => {
             txReceipt && this.setState({ txReceiptStatus: txReceipt.logs.length ? 2 : 1 })
           })
+          .catch((e) => {
+            console.warn(e)
+          })
       }
     }, 10000)
   }
