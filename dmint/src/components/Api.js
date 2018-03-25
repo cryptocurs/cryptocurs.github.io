@@ -26,7 +26,7 @@ class Api {
           
           try {
             const text = JSON.parse(res.text)
-            if (text.status === '0' || text.result === undefined) {
+            if (text.result === undefined) {
               throw new Error(text.error && text.error.message || 'Wrong data received')
             } else {
               resolve(text.result)

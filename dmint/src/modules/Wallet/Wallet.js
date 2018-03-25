@@ -27,8 +27,8 @@ class Wallet extends Component {
     this.state = {
       gasPrice: this.gasPricePosToValue(22),
       gasPricePos: 22,
-      receiver: '',
-      amount: '',
+      receiver: storage.get().paymentMetaTo || '',
+      amount: storage.get().paymentMetaAmount || '',
       validationState: {},
       autoMining: false,
       txSending: false,

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {
   Grid, Row, Col,
+  Image,
   Panel,
   Form, FormGroup, InputGroup, ControlLabel, FormControl, HelpBlock, Button, Alert,
   Glyphicon,
@@ -10,6 +11,7 @@ import crypto from 'crypto'
 import BigNumber from 'bignumber.js'
 
 import { storage, api, Address } from 'components'
+import url from 'assets/images/dminturl.png'
  
 class LoginForm extends Component {
 
@@ -26,7 +28,14 @@ class LoginForm extends Component {
   }
   
   componentDidMount() {
-    
+    const paymentMetaBased = window.location.hash.replace('#', '')
+    if (paymentMetaBased !== '') {
+      const paymentMeta = Buffer.from(paymentMetaBased, 'base64').toString('ascii')
+      const [ paymentMetaTo, paymentMetaAmount ] = paymentMeta.split(':')
+      if (paymentMetaTo && paymentMetaTo !== '' && paymentMetaAmount && paymentMetaAmount !== '') {
+        storage.get().set({ paymentMetaTo, paymentMetaAmount })
+      }
+    }
   }
   
   authByKey(privateKey) {
@@ -108,6 +117,10 @@ class LoginForm extends Component {
       <Grid>
         <Row>
           <Col smOffset={2} sm={8}>
+            <Panel header='Check the spelling of the address' bsStyle='warning' className='text-center'>
+              <div><b>ALWAYS CHECK THAT YOU ARE HERE</b></div>
+              <Image src={url} />
+            </Panel>
             <Panel header='Authorization' bsStyle='info'>
               <Form>
                 <FormGroup validationState={validationState.privateKey && validationState.privateKey.type}>
