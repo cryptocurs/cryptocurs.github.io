@@ -24,6 +24,28 @@ class App extends Component {
   
   componentDidMount() {
     storage.on('update', () => this.forceUpdate())
+    
+    const metaBased = window.location.hash.replace('#', '')
+    if (metaBased !== '') {
+      const meta = Buffer.from(metaBased, 'base64').toString('ascii')
+      const metaArr = meta.split('$')
+      if (metaArr.length === 3) {
+        if (metaArr[0] === 'PAY') {
+          const [ cmd, paymentMetaTo, paymentMetaAmount ] = metaArr
+          if (paymentMetaTo && paymentMetaTo !== '' && paymentMetaAmount && paymentMetaAmount !== '') {
+            storage.get().set({ paymentMetaTo, paymentMetaAmount })
+          }
+        } else if (metaArr[0] === 'AUTH') {
+          const [ cmd, authToken, authUrl ] = metaArr
+          if (authToken && authToken !== '' && authUrl && authUrl !== '') {
+            storage.get().set({ authToken, authUrl })
+          }
+        }
+      }
+      
+      const newLocation = window.location.href.replace('#' + metaBased, '')
+      // history.replaceState({}, '', newLocation)
+    }
   }
   
   render() {

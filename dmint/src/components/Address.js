@@ -27,6 +27,10 @@ class Address {
     return this.keys.priv
   }
   
+  getPubl() {
+    return this.keys.publ
+  }
+  
   getHash() {
     return this.hash
   }

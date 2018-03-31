@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
 import crypto from 'crypto'
+import EthereumUtil from 'ethereumjs-util'
 import BigNumber from 'bignumber.js'
 
 import { storage, api, Address } from 'components'
@@ -28,14 +29,7 @@ class LoginForm extends Component {
   }
   
   componentDidMount() {
-    const paymentMetaBased = window.location.hash.replace('#', '')
-    if (paymentMetaBased !== '') {
-      const paymentMeta = Buffer.from(paymentMetaBased, 'base64').toString('ascii')
-      const [ paymentMetaTo, paymentMetaAmount ] = paymentMeta.split(':')
-      if (paymentMetaTo && paymentMetaTo !== '' && paymentMetaAmount && paymentMetaAmount !== '') {
-        storage.get().set({ paymentMetaTo, paymentMetaAmount })
-      }
-    }
+    
   }
   
   authByKey(privateKey) {
@@ -50,6 +44,7 @@ class LoginForm extends Component {
   
   auth() {
     const { privateKey, validationState } = this.state
+    const {authToken, authUrl} = storage.get()
     
     const address = this.authByKey(privateKey)
     if (!address) {
@@ -74,6 +69,37 @@ class LoginForm extends Component {
         },
       },
     })
+    
+    if (authUrl) {
+      new Promise((resolve, reject) => {
+        const { v, r, s } = EthereumUtil.ecsign(crypto.createHash('sha256').update(authToken).digest(), Buffer.from(privateKey, 'hex'))
+        api.get(authUrl + address.getPubl().toString('hex') + '/' + v + '/' + r.toString('hex') + '/' + s.toString('hex'))
+          .then((res) => {
+            if (res.redirect) {
+              location.href = res.redirect
+            } else {
+              reject()
+            }
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      }).then((address) => {
+        console.log(address)
+      }).catch((e) => {
+        this.setState({
+          authLoading: false,
+          validationState: {
+            ...validationState,
+            privateKey: {
+              type: 'error',
+              message: 'Server error',
+            },
+          },
+        })
+      })
+      return
+    }
     
     const getUserData = (setTimer = false) => {
       return new Promise((resolve, reject) => {
@@ -112,16 +138,23 @@ class LoginForm extends Component {
   
   render() {
     const {privateKey, authLoading, generateLoading, validationState, newPrivateKey, showPassword} = this.state
+    const {authUrl} = storage.get()
     
     return (
       <Grid>
         <Row>
-          <Col smOffset={2} sm={8}>
+          <Col mdOffset={2} md={8}>
             <Panel header='Check the spelling of the address' bsStyle='warning' className='text-center'>
               <div><b>ALWAYS CHECK THAT YOU ARE HERE</b></div>
               <Image src={url} />
             </Panel>
             <Panel header='Authorization' bsStyle='info'>
+              {authUrl &&
+                <div>
+                  <b>You are going to authorize at</b>
+                  <Alert bsStyle='info'>{authUrl.length > 30 ? authUrl.slice(0, 30) + '...' : authUrl}</Alert>
+                </div>
+              }
               <Form>
                 <FormGroup validationState={validationState.privateKey && validationState.privateKey.type}>
                   <ControlLabel>Your Ethereum private key</ControlLabel>

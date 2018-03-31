@@ -13,6 +13,26 @@ class Api {
     
   }
   
+  get(url) {
+    return new Promise((resolve, reject) => {
+      superagent
+        .get(url)
+        .end((err, res) => {
+          if (err) {
+            reject(err)
+            return
+          }
+          
+          try {
+            const text = JSON.parse(res.text)
+            resolve(text)
+          } catch (e) {
+            reject(e)
+          }
+        })
+    })
+  }
+  
   call(path, returnError = false, attempts = 0) {
     console.log({ path })
     return new Promise((resolve, reject) => {
