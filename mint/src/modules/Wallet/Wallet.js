@@ -78,7 +78,7 @@ class Wallet extends Component {
   }
   
   mine() {
-    const { gasPrice } = this.state
+    const { gasPrice, autoMining } = this.state
     const { address } = storage.get()
     this.setState({ txSending: true })
     api.mine(address, '0x' + BigNumber(gasPrice).times('10000000').toString(16))
@@ -86,8 +86,14 @@ class Wallet extends Component {
         this.setState({ txHash })
       })
       .catch((e) => {
-        this.setState({ txSending: false })
-        alert(e)
+        console.log(e.message)
+        const matches = e.message.match(/known transaction: (\w*)/)
+        if (matches && matches[1]) {
+          this.setState({ txHash: '0x' + matches[1].replace('0x', '') })
+        } else {
+          this.setState({ txSending: false })
+          !autoMining && alert(e)
+        }
       })
   }
   
