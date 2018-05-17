@@ -1,0 +1,33 @@
+body {
+	background-color: #1C2B3E;
+	font-family: 'Play', sans-serif;
+  font-size: 16px;
+  color: #5D6C7F;
+}
+
+.text-light {
+  color: #7F8E9F;
+}
+
+.well {
+  background-color: #1C2B3E;
+  color: #5D6C7F;
+}
+
+.navbar {
+  background-color: #1C2B3E;
+  color: #5D6C7F;
+}
+
+.input-transparent {
+  background-color: #1C2B3E;
+  color: #7F8D9F;
+}
+
+.selected {
+	background-color: #2D3C4F;
+}
+
+.clear {
+  clear: both;
+}
