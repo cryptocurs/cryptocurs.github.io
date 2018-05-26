@@ -2,6 +2,10 @@ export const ADD_USER = 'Messenger/ADD_USER'
 export const ADD_MESSAGE = 'Messenger/ADD_MESSAGE'
 export const SET_LAST_BLOCK = 'Messenger/SET_LAST_BLOCK'
 export const SET_UNREAD = 'Messenger/SET_UNREAD'
+export const REPLACE_USERS = 'Messenger/REPLACE_USERS'
+export const REPLACE_UNREAD = 'Messenger/REPLACE_UNREAD'
+
+import { storage } from 'components'
 
 function addUser(userKey, userOptions) {
   return dispatch => {
@@ -13,7 +17,18 @@ function addUser(userKey, userOptions) {
   }
 }
 
-function addMessage(userKey, data) {
+function addMessage(idb, userKey, data) {
+  return dispatch => new Promise((resolve, reject) => {
+    const tx = idb.transaction('messages', 'readwrite')
+    const store = tx.objectStore('messages')
+    store.put({ userKey, ...data })
+    
+    tx.oncomplete = () => {
+      resolve()
+    }
+  })
+  
+  /*
   return dispatch => {
     dispatch({
       type: ADD_MESSAGE,
@@ -21,6 +36,7 @@ function addMessage(userKey, data) {
       data,
     })
   }
+  */
 }
 
 function setLastBlock(lastBlock) {
@@ -42,9 +58,29 @@ function setUnread(userKey, unread) {
   }
 }
 
+function replaceUsers(data) {
+  return dispatch => {
+    dispatch({
+      type: REPLACE_USERS,
+      data,
+    })
+  }
+}
+
+function replaceUnread(data) {
+  return dispatch => {
+    dispatch({
+      type: REPLACE_UNREAD,
+      data,
+    })
+  }
+}
+
 export default {
   addUser,
   addMessage,
   setLastBlock,
   setUnread,
+  replaceUsers,
+  replaceUnread,
 }

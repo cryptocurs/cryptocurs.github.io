@@ -5,6 +5,8 @@ import {
   ADD_MESSAGE,
   SET_LAST_BLOCK,
   SET_UNREAD,
+  REPLACE_USERS,
+  REPLACE_UNREAD,
 } from './actions'
 
 const initialState = {
@@ -42,6 +44,14 @@ export default function(state = initialState, action) {
         ...state.unread,
         [action.userKey]: action.unread,
       },
+    }),
+    [REPLACE_USERS]: () => ({
+      ...state,
+      users: action.data,
+    }),
+    [REPLACE_UNREAD]: () => ({
+      ...state,
+      unread: action.data,
     }),
   }
   return actions[action.type] && actions[action.type]() || state

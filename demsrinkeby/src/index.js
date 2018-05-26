@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { AutoSizer } from 'react-virtualized'
-import moment from 'moment'
-import crypto from 'crypto'
+import * as R from 'ramda'
 
 import reducer from './modules/Messenger/reducer'
 import { createStore, applyMiddleware } from 'redux'
@@ -30,7 +29,7 @@ const store = createStoreWithMiddleware(
   state ? JSON.parse(state) : {}
 )
 
-import {storage, ls} from 'components'
+import {storage, ls, IDBProvider} from 'components'
 import {Header, LoginForm, Messenger} from 'modules'
 
 storage.get().set({ config })
@@ -73,7 +72,9 @@ class App extends Component {
           {({ height, width }) => (
             <div style={{height, width}}>
               <Header onSelect={(selected) => this.setState({selected})} />
-              {address && this.getComponent(selected, width, height) || <LoginForm />}
+              <IDBProvider>
+                {address && this.getComponent(selected, width, height) || <LoginForm />}
+              </IDBProvider>
             </div>
           )}
         </AutoSizer>

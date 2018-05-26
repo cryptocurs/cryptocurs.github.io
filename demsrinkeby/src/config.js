@@ -1,6 +1,7 @@
 module.exports = {
   "app": {
-    "localStoragePrefix": "rinkeby_"
+    "localStoragePrefix": "rinkeby_",
+    "localStorageLimit": 1000000,
   },
   "network": {
     "id": "4",
