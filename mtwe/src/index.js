@@ -13,7 +13,6 @@ class App extends Component {
   constructor() {
     super()
     const contractAddress = '0x64488C9ffee6a23620F80fe4E0Dc85bE17B4c613' // main
-    // const contractAddress = '0x2deF0d228A35D52D1C218586Eb02792cB6716199' // rinkeby
     storage.get().set({
       chainId: 1, // main
       // chainId: 3, // ropsten

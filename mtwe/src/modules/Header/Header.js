@@ -18,10 +18,10 @@ class Header extends Component {
           </Navbar.Brand>
         </Navbar.Header>
         <Nav>
-          <NavItem eventKey={1} href="/mtwe">
+          <NavItem eventKey={1} href="/mtwe/">
             Main page
           </NavItem>
-          <NavItem eventKey={2} href="/mtwe/public/mtwe-en.pdf">
+          <NavItem eventKey={2} href="/mtwe/mtwe-en.pdf">
             Whitepaper
           </NavItem>
         </Nav>
