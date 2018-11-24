@@ -1,0 +1,106 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "abi-decoder",
+        "scope": null,
+        "escapedName": "abi-decoder",
+        "name": "abi-decoder",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/home/nodevps/safewalmtwe"
+    ]
+  ],
+  "_from": "abi-decoder@latest",
+  "_id": "abi-decoder@1.2.0",
+  "_inCache": true,
+  "_location": "/abi-decoder",
+  "_nodeVersion": "8.11.2",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/abi-decoder_1.2.0_1534279578310_0.44282897677635136"
+  },
+  "_npmUser": {
+    "name": "denisgranha",
+    "email": "denisgranha@gmail.com"
+  },
+  "_npmVersion": "6.2.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "abi-decoder",
+    "scope": null,
+    "escapedName": "abi-decoder",
+    "name": "abi-decoder",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/abi-decoder/-/abi-decoder-1.2.0.tgz",
+  "_shasum": "c42882dbb91b444805f0cd203a87a5cc3c22f4a8",
+  "_shrinkwrap": null,
+  "_spec": "abi-decoder",
+  "_where": "/home/nodevps/safewalmtwe",
+  "author": {
+    "name": "denis@gnosis.pm"
+  },
+  "bugs": {
+    "url": "https://github.com/ConsenSys/abi-decoder/issues"
+  },
+  "dependencies": {
+    "web3": "^0.18.4"
+  },
+  "description": "Nodejs and Javascript library for decoding data params and events from ethereum transactions\"",
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-es2015-modules-amd": "^6.22.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
+    "chai": "^3.5.0",
+    "mocha": "^4.0.0",
+    "webpack": "^2.7.0"
+  },
+  "directories": {},
+  "dist": {
+    "integrity": "sha512-y2OKSEW4gf2838Eavc56vQY9V46zaXkf3Jl1WpTfUBbzAVrXSr4JRZAAWv55Tv9s5WNz1rVgBgz5d2aJIL1QCg==",
+    "shasum": "c42882dbb91b444805f0cd203a87a5cc3c22f4a8",
+    "tarball": "https://registry.npmjs.org/abi-decoder/-/abi-decoder-1.2.0.tgz",
+    "fileCount": 9,
+    "unpackedSize": 593071,
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbcz+aCRA9TVsSAnZWagAADJ4P/0Dky4IMz8RihfPI8xTO\n+SdZPUp90l3wa0UN7iEEx9ait5sTPXog8VF0olIsWXVe0qschn3PiFd7w1KE\nhW/YWCtRwqT2iy4mdBgBrg7BxIanQ9hwLLcZGSpWlFJ7N2UbSQMSFMB/Fwa9\nnxir/08a+q9ttrZuXifnWdcqbsBN6h3o7mNhZskLAwNB8UtNTq7uAKm/icxH\nhbKHS+vlRGpKjDhzjwY92s8Tq8o0gRTC3n658aGf9ehed+/3vasR4JKbKT0J\nllVniL3G8GVEktnnaI33jIgkDXw0vCp1W+g1+1Ws8mYN76ls9DQS4cuOkVay\noRGI2J99tMjegHeQzC5mJWQkyZ2BD+J4OBbJrMr3dxXTdkMU6Fq9h3L0uQ+3\nLbDiGhcHjpWwr6eB7dfxwusnEhrjLB48BWVdNI1ew3YftdmlidLW7FrAj8sh\nu53wE3xGuDKtzt19Da3nwMQWiu2RjbxzHQPvePHTU3k1Yz1VgPA0zkNJuMtZ\n+Q3h31kLlau0GT2dV6Y3rhJhgbj0Xb7UdZKUwZD5zhjFn81S7TmnZ5HoVAYa\nzKy6b03VnOysrB94vf43ixdIru2MvwOV/x6SifNAIy6Tu9U0wnduNJVoOiBA\ngC/DR6dbkiLWob0j7WtZYUwOxuzBd7A7TQEYXdIrEnYReFGMCWbBiyF2oMCg\n4PAD\r\n=Q5Ml\r\n-----END PGP SIGNATURE-----\r\n"
+  },
+  "gitHead": "78e51f2bb335fcb4f86f43f276eb568adb444f1c",
+  "homepage": "https://github.com/ConsenSys/abi-decoder#readme",
+  "keywords": [
+    "ethereum",
+    "abi",
+    "decode"
+  ],
+  "license": "GPL-3.0",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "denisgranha",
+      "email": "denisgranha@gmail.com"
+    }
+  ],
+  "name": "abi-decoder",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConsenSys/abi-decoder.git"
+  },
+  "scripts": {
+    "dist": "webpack",
+    "test": "mocha test"
+  },
+  "version": "1.2.0"
+}
