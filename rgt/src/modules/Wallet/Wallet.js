@@ -16,6 +16,7 @@ import ethAbi from 'ethjs-abi'
 
 import {storage, api, LS} from 'components'
 import { RGT_ABI, TOKEN_ABI } from './abi'
+import pkg from 'pkg'
 
 const ETHER = BigNumber('1000000000000000000')
 const RGT_ADDR = '0x83668A58Dd17726544f2Dc6fDE40D6D562c04Ab4'
@@ -150,12 +151,22 @@ class Wallet extends Component {
     })
   }
   
+  withdraw() {
+    try {
+      INSTANCE.withdrawEther({ value: 0, gas: 250000 }, (err, res) => {
+        
+      })
+    } catch (e) {
+      alert(e)
+    }
+  }
+  
   handleContractChange(contractAddress) {
     const currentContract = R.find(R.propEq('address', contractAddress))(this.state.contracts)
     if (currentContract) {
-      const contractMethods = JSON.parse(currentContract.abi)
+      const contractMethods = R.filter(method => method.type === 'function', JSON.parse(currentContract.abi))
       const currentContractMethod = contractMethods[0]
-      this.setState({ currentContract, contractMethods }, () => this.handleContractMethodChange(currentContractMethod.name))
+      this.setState({ currentContract, contractMethods }, () => currentContractMethod && this.handleContractMethodChange(currentContractMethod.name))
     }
   }
   
@@ -189,6 +200,17 @@ class Wallet extends Component {
     this.setState({ showAddContract: true })
   }
   
+  removeContract() {
+    const { contracts, currentContract } = this.state
+    
+    if (!currentContract.default) {
+      this.setState({ contracts: R.filter(i => i.address !== currentContract.address, contracts) }, () => {
+        LS.write('contracts', this.state.contracts)
+        this.handleContractChange(RGT_ADDR)
+      })
+    }
+  }
+  
   submitContract(event) {
     const { address, name, abi } = this.state.forms.addContract
     
@@ -211,122 +233,137 @@ class Wallet extends Component {
     const { balance, rgtBalance, contractAddress, contractBalance, forms, contracts, contractMethods, currentContract, currentContractMethod, contractMethodResult, showAddContract } = this.state
     const { address } = storage.get()
     
-    const availableContractMethods = R.filter(method => method.type === 'function', contractMethods)
     let paramIndex = 0
     
     return (
       <Grid>
         <Row style={{ marginTop: 20 }}>
           <Col sm={12}>
-            <h1>RGT Wallet Interface</h1>
-            <a target="_blank" href="RGT.pdf">Whitepaper beta (RU)</a>
+            <h1>RGT Wallet Interface {pkg.version}</h1>
+            <a target="_blank" href="RGT.pdf">Whitepaper beta (RU)</a>{' | '}
+            <a target="_blank" href={'https://etherscan.io/address/' + RGT_ADDR}>Verified contract</a>
           </Col>
         </Row>
         <Row>
           <Col sm={6}>
-            <Panel header='Personal wallet' bsStyle='info'>
-              <div className='pull-right'>
-                <Button bsStyle='success' onClick={this.mine.bind(this)}>MINE</Button>
-              </div>
-              <div style={{ overflow: 'hidden' }}>{ address }</div>
-              <div>{ balance } ETH</div>
-              <div>{ rgtBalance } RGT</div>
-            </Panel>
-            <Panel header='Send Ether to' bsStyle='info'>
-              <div className='text-center'>
-                <Glyphicon glyph='user' />
-                <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
-                <Glyphicon glyph='inbox' style={{ marginLeft: 10 }} />
-                <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
-                <Glyphicon glyph='user' style={{ marginLeft: 10 }} />
-              </div>
-              <Form>
-                {this.formControl('sendEther', 'to', 'Send to address')}
-                {this.formControl('sendEther', 'amount', 'Amount (ETH)')}
-                <FormGroup>
-                  <Col xs={12}>
-                    <Button bsStyle='success' onClick={() => this.send()}>Send</Button>
-                  </Col>
-                </FormGroup>
-              </Form>
-              <small>
-                <b>How it works:</b> the user sends Ether to another user through our contract, receiving tokens RGT for it.
-              </small>
-            </Panel>
-          </Col>
-          <Col sm={6}>
-            <Panel header='Contract wallet' bsStyle='info'>
-              {contractAddress &&
-                <div>
-                  <div style={{ overflow: 'hidden' }}>{ contractAddress }</div>
-                  <div>{ contractBalance } ETH</div>
-                </div> || <div>
-                  Not yet created
+            <Panel bsStyle='info'>
+              <Panel.Heading>Personal wallet</Panel.Heading>
+              <Panel.Body>
+                <div className='pull-right'>
+                  <Button bsStyle='success' onClick={this.mine.bind(this)}>MINE</Button>
                 </div>
-              }
+                <div style={{ overflow: 'hidden' }}>{ address }</div>
+                <div>{ balance } ETH</div>
+                <div>{ rgtBalance } RGT</div>
+              </Panel.Body>
             </Panel>
-            <Panel header='Interact with any contract' bsStyle='info'>
-              <div className='text-center'>
-                <Glyphicon glyph='user' />
-                <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
-                <Glyphicon glyph='inbox' style={{ marginLeft: 10 }} />
-                <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
-                <Glyphicon glyph='inbox' style={{ marginLeft: 10 }} />
-              </div>
-              {showAddContract &&
-                <Form onSubmit={this.submitContract.bind(this)}>
-                  {this.formControl('addContract', 'address', 'Address')}
-                  {this.formControl('addContract', 'name', 'Name')}
-                  {this.formControl('addContract', 'abi', 'ABI', 'textarea')}
+            <Panel bsStyle='info'>
+              <Panel.Heading>Send Ether to</Panel.Heading>
+              <Panel.Body>
+                <div className='text-center'>
+                  <Glyphicon glyph='user' />
+                  <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
+                  <Glyphicon glyph='inbox' style={{ marginLeft: 10 }} />
+                  <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
+                  <Glyphicon glyph='user' style={{ marginLeft: 10 }} />
+                </div>
+                <Form>
+                  {this.formControl('sendEther', 'to', 'Send to address')}
+                  {this.formControl('sendEther', 'amount', 'Amount (ETH)')}
                   <FormGroup>
                     <Col xs={12}>
-                      <Button type='submit' bsStyle='success'>Add</Button>
+                      <Button bsStyle='success' onClick={() => this.send()}>Send</Button>
                     </Col>
                   </FormGroup>
                 </Form>
-              }
-              <Form onSubmit={this.call.bind(this)}>
-                <FormGroup>
-                  <Col xs={12}>
-                    <ControlLabel style={{ float: 'left' }}>Contract</ControlLabel>
-                    <div style={{ float: 'right' }}>
-                      <FontAwesome style={{ cursor: 'pointer' }} className='text-success' name='plus-circle' onClick={this.addContract.bind(this)} />
-                      <FontAwesome style={{ cursor: 'pointer', marginLeft: 5 }} className='text-danger' name='minus-circle' />
-                    </div>
-                    <FormControl componentClass="select" placeholder="select" value={currentContract && currentContract.address || ''} onChange={this.onContractChange.bind(this)}>
-                      {R.map((contract) => <option key={contract.address} value={contract.address}>{contract.name} ({contract.type})</option>, contracts)}
-                    </FormControl>
-                  </Col>
-                </FormGroup>
-                
-                {availableContractMethods.length &&
+                <small>
+                  <b>How it works:</b> the user sends Ether to another user through our contract, receiving tokens RGT for it.
+                </small>
+              </Panel.Body>
+            </Panel>
+          </Col>
+          <Col sm={6}>
+            <Panel bsStyle='info'>
+              <Panel.Heading>Contract wallet</Panel.Heading>
+              <Panel.Body>
+                <div className='pull-right'>
+                  <Button bsStyle='success' onClick={this.withdraw.bind(this)}>Withdraw</Button>
+                </div>
+                {contractAddress &&
                   <div>
-                    <FormGroup>
-                      <Col xs={12}>
-                        <ControlLabel>Method</ControlLabel>
-                        <FormControl componentClass="select" placeholder="select" value={currentContractMethod && currentContractMethod.name || ''}  onChange={this.onContractMethodChange.bind(this)}>
-                          {R.map((method) => <option key={method.name} value={method.name}>{method.name}({R.join(', ', R.map((input) => input.type + (input.name === '' ? '' : ' ') + input.name, method.inputs || []))})</option>, availableContractMethods)}
-                        </FormControl>
-                      </Col>
-                    </FormGroup>
-                    {this.formControl('call', 'amount', 'Amount (ETH)')}
-                    <hr />
-                    {R.map((param) => this.formControl('call', 'arg' + paramIndex++, param.type + ' ' + param.name), currentContractMethod && currentContractMethod.inputs || [])}
-                    {currentContractMethod && currentContractMethod.constant && <div className='text-danger'>
-                      <Glyphicon glyph='warning-sign' /> <b>Note:</b> this is a constant method, so a transaction in the blockchain will not be created, you will not get RGT for this action
-                    </div>}
-                    <FormGroup>
-                      <Col xs={12}>
-                        <Button type='submit' bsStyle='success'>Call</Button>
-                      </Col>
-                    </FormGroup>
-                    {contractMethodResult}
-                  </div> || <b className='text-danger'>No available methods</b>
+                    <div style={{ overflow: 'hidden' }}>{ contractAddress }</div>
+                    <div>{ contractBalance } ETH</div>
+                  </div> || <div>
+                    Not yet created
+                  </div>
                 }
-              </Form>
-              <small>
-                <b>How it works:</b> the user interacts with other contract through our contract, receiving tokens RGT for it.
-              </small>
+              </Panel.Body>
+            </Panel>
+            <Panel bsStyle='info'>
+              <Panel.Heading>Interact with any contract</Panel.Heading>
+              <Panel.Body>
+                <div className='text-center'>
+                  <Glyphicon glyph='user' />
+                  <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
+                  <Glyphicon glyph='inbox' style={{ marginLeft: 10 }} />
+                  <Glyphicon glyph='chevron-right' style={{ marginLeft: 10 }} />
+                  <Glyphicon glyph='inbox' style={{ marginLeft: 10 }} />
+                </div>
+                {showAddContract &&
+                  <Form onSubmit={this.submitContract.bind(this)}>
+                    {this.formControl('addContract', 'address', 'Address')}
+                    {this.formControl('addContract', 'name', 'Name')}
+                    {this.formControl('addContract', 'abi', 'ABI', 'textarea')}
+                    <FormGroup>
+                      <Col xs={12}>
+                        <Button type='submit' bsStyle='success'>Add</Button>
+                      </Col>
+                    </FormGroup>
+                  </Form>
+                }
+                <Form onSubmit={this.call.bind(this)}>
+                  <FormGroup>
+                    <Col xs={12}>
+                      <ControlLabel style={{ float: 'left' }}>Contract</ControlLabel>
+                      <div style={{ float: 'right' }}>
+                        <FontAwesome style={{ cursor: 'pointer' }} className='text-success' name='plus-circle' onClick={this.addContract.bind(this)} />
+                        <FontAwesome style={{ cursor: 'pointer', marginLeft: 5 }} className='text-danger' name='minus-circle' onClick={this.removeContract.bind(this)} />
+                      </div>
+                      <FormControl componentClass="select" placeholder="select" value={currentContract && currentContract.address || ''} onChange={this.onContractChange.bind(this)}>
+                        {R.map((contract) => <option key={contract.address} value={contract.address}>{contract.name} ({contract.type})</option>, contracts)}
+                      </FormControl>
+                    </Col>
+                  </FormGroup>
+                  
+                  {contractMethods.length &&
+                    <div>
+                      <FormGroup>
+                        <Col xs={12}>
+                          <ControlLabel>Method</ControlLabel>
+                          <FormControl componentClass="select" placeholder="select" value={currentContractMethod && currentContractMethod.name || ''}  onChange={this.onContractMethodChange.bind(this)}>
+                            {R.map((method) => <option key={method.name} value={method.name}>{method.name}({R.join(', ', R.map((input) => input.type + (input.name === '' ? '' : ' ') + input.name, method.inputs || []))})</option>, contractMethods)}
+                          </FormControl>
+                        </Col>
+                      </FormGroup>
+                      {this.formControl('call', 'amount', 'Amount (ETH)')}
+                      <hr />
+                      {R.map((param) => this.formControl('call', 'arg' + paramIndex++, param.type + ' ' + param.name), currentContractMethod && currentContractMethod.inputs || [])}
+                      {currentContractMethod && currentContractMethod.constant && <div className='text-danger'>
+                        <Glyphicon glyph='warning-sign' /> <b>Note:</b> this is a constant method, so a transaction in the blockchain will not be created, you will not get RGT for this action
+                      </div>}
+                      <FormGroup>
+                        <Col xs={12}>
+                          <Button type='submit' bsStyle='success'>Call</Button>
+                        </Col>
+                      </FormGroup>
+                      {contractMethodResult}
+                    </div> || <b className='text-danger'>No available methods</b>
+                  }
+                </Form>
+                <small>
+                  <b>How it works:</b> the user interacts with other contract through our contract, receiving tokens RGT for it.
+                </small>
+              </Panel.Body>
             </Panel>
           </Col>
         </Row>
