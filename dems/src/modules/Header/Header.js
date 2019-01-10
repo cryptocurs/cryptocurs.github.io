@@ -16,7 +16,7 @@ class Header extends Component {
     return (
       <Navbar>
         <Nav>
-          <NavItem eventKey={1} onClick={() => this.props.onSelect(1)}>Messenger</NavItem>
+          <NavItem eventKey={1} onClick={() => this.props.onSelect(1)}>DEMS</NavItem>
         </Nav>
       </Navbar>
     )

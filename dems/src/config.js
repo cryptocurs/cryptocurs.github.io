@@ -1,4 +1,8 @@
 module.exports = {
+  "app": {
+    "localStoragePrefix": "mainnet_",
+    "localStorageLimit": 1000000,
+  },
   "network": {
     "id": "1",
     "explorerTx": "https://etherscan.io/tx/",

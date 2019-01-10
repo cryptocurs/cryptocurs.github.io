@@ -8,6 +8,8 @@ import YouTube from 'react-youtube'
 import _ from 'lodash'
 import crypto from 'crypto'
 import eccrypto from 'eccrypto'
+import secp256k1 from 'secp256k1'
+import bs58 from 'bs58'
 
 import {storage, ls} from 'components'
  
@@ -22,6 +24,7 @@ class LoginForm extends Component {
   
   authorize() {
     if (typeof web3 !== 'undefined') {
+      web3.currentProvider.enable()
       web3.version.getNetwork((err, res) => {
         if (res !== storage.get().config.network.id) {
           this.setState({errors: ['You are on the wrong network!']})
@@ -34,10 +37,14 @@ class LoginForm extends Component {
           this.setState({errors: []})
           if (!ls.readRaw('msgPrivKey')) {
             const privKey = crypto.randomBytes(32)
+            const publKey = secp256k1.publicKeyCreate(privKey)
             ls.writeRaw('msgPrivKey', privKey.toString('hex'))
-            ls.writeRaw('msgPublKey', eccrypto.getPublic(privKey).toString('base64'))
+            ls.writeRaw('msgPublKey', bs58.encode(publKey))
             storage.get().set({ justRegistered: true })
           }
+          
+          const msgPublKey = ls.readRaw('msgPublKey')
+          
           const addressBuffer = Buffer.from(address.slice(2).toLowerCase(), 'hex')
           storage.get().set({ address, addressBuffer })
           setInterval(() => {

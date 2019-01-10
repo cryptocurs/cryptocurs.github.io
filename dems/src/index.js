@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { AutoSizer } from 'react-virtualized'
-import moment from 'moment'
-import crypto from 'crypto'
+import * as R from 'ramda'
 
 import reducer from './modules/Messenger/reducer'
 import { createStore, applyMiddleware } from 'redux'
@@ -11,9 +10,11 @@ import { Provider } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 
+import config from './config'
+
 const persistMiddleware = ({ getState, dispatch }) => next => action => {
   const result = next(action)
-  localStorage.setItem('state', JSON.stringify(getState()))
+  localStorage.setItem(config.app.localStoragePrefix + 'state', JSON.stringify(getState()))
   return result
 }
 
@@ -22,16 +23,16 @@ if (process.env.NODE_ENV === 'development') {
   middlewares.push(createLogger({}))
 }
 const createStoreWithMiddleware = applyMiddleware(...middlewares)(createStore)
-const state = localStorage.getItem('state')
+const state = localStorage.getItem(config.app.localStoragePrefix + 'state')
 const store = createStoreWithMiddleware(
   reducer,
   state ? JSON.parse(state) : {}
 )
 
-import {storage, ls} from 'components'
+import {storage, ls, IDBProvider} from 'components'
 import {Header, LoginForm, Messenger} from 'modules'
 
-import config from './config'
+storage.get().set({ config })
 
 import 'node_modules/bootstrap/dist/css/bootstrap.min.css'
 import 'node_modules/font-awesome/css/font-awesome.css'
@@ -53,7 +54,6 @@ class App extends Component {
   
   componentDidMount() {
     storage.on('update', () => this.forceUpdate())
-    storage.get().set({ config })
   }
   
   getComponent(selected, width, height) {
@@ -72,7 +72,9 @@ class App extends Component {
           {({ height, width }) => (
             <div style={{height, width}}>
               <Header onSelect={(selected) => this.setState({selected})} />
-              {address && this.getComponent(selected, width, height) || <LoginForm />}
+              <IDBProvider>
+                {address && this.getComponent(selected, width, height) || <LoginForm />}
+              </IDBProvider>
             </div>
           )}
         </AutoSizer>

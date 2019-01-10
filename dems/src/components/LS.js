@@ -1,5 +1,7 @@
 'use strict'
 
+import {storage} from 'components'
+
 class LS {
 
   constructor() {
@@ -7,11 +9,11 @@ class LS {
   }
   
   readRaw(field) {
-    return localStorage.getItem(field)
+    return localStorage.getItem(storage.get().config.app.localStoragePrefix + field)
   }
   
   writeRaw(field, value) {
-    localStorage.setItem(field, value)
+    localStorage.setItem(storage.get().config.app.localStoragePrefix + field, value)
   }
   
   read(field) {
