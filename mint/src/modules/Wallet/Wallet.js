@@ -202,6 +202,10 @@ class Wallet extends Component {
     })
   }
   
+  retry() {
+    this.setState({ txSending: false, txHash: null, txReceiptStatus: 0 })
+  }
+  
   render() {
     const { height, width } = this.props
     const { gasPrice, gasPricePos, receiver, amount, validationState, txSending, txHash, txReceiptStatus } = this.state
@@ -232,7 +236,7 @@ class Wallet extends Component {
                 }
                 {!txReceiptStatus &&
                   <Alert bsStyle='warning'>
-                    If more than 10 minutes have passed, you may have set the gas cost too low. Try to reload the page.
+                    If more than 10 minutes have passed, you may have set the gas price too low. Try to reload the page.
                   </Alert>
                 }
                 {!!txReceiptStatus &&
@@ -241,6 +245,9 @@ class Wallet extends Component {
                   </div>
                 }
               </div>
+            </div>
+            <div className='pull-right'>
+              <Button bsStyle='info' onClick={this.retry.bind(this)}>Retry with a higher gas price</Button>
             </div>
             <div style={{marginTop: 5, float: 'left'}}>
               <Switch onClick={this.autoMining.bind(this)} on={this.state.autoMining} />
@@ -282,11 +289,15 @@ class Wallet extends Component {
               <Button bsSize='large' bsStyle='success' disabled={!canMine} onClick={() => this.mine()}>MINE {storage.get().tokenName} (gas will be spent)</Button>
             </div>
             <div><b>(You must have at least 0.01% of all tokens to get chance for successful mining)</b></div>
-            <div style={{marginTop: 5, float: 'left'}}>
-              <Switch onClick={this.autoMining.bind(this)} on={this.state.autoMining} />
+            <div>
+              <div style={{marginTop: 5, marginRight: 5, marginBottom: 5, float: 'left'}}>
+                <Switch onClick={this.autoMining.bind(this)} on={this.state.autoMining} />
+              </div>
+              <div style={{ marginTop: 5 }}>
+                <b>Auto-mining</b>{' '}
+              </div>
             </div>
-            <b>Auto-mining</b>{' '}
-            Warning! ETH will be spent for gas! Wallet must be opened for auto-mining!
+            <small>Warning! ETH will be spent for gas! Wallet must be opened for auto-mining!</small>
           </Col>
         </Row>
         <Row style={{marginTop: 5}}>

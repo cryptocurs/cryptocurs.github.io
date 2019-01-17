@@ -143,7 +143,12 @@ class LoginForm extends Component {
     return (
       <Grid>
         <Row>
-          <Col mdOffset={2} md={8}>
+          <Col xs={12}>
+            <Alert bsStyle='danger'>mitoken.club is CLOSED! Only this site is the official token site!</Alert>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={8}>
             <Panel header='Check the spelling of the address' bsStyle='warning' className='text-center'>
               <div><b>ALWAYS CHECK THAT YOU ARE HERE</b></div>
               <Image src={url} />
@@ -175,6 +180,18 @@ class LoginForm extends Component {
             </Panel>
             <Panel header='We respect your privacy' bsStyle='info'>
               Your private key is not transmitted to our servers. Your private key is stored only on your computer and only for the duration of the session with the wallet.
+            </Panel>
+          </Col>
+          <Col md={4}>
+            <Panel header='About' bsStyle='info'>
+              <h2>What is MINT?</h2>
+              MINT is MINeable Token working on the Ethereum platform. To mine bitcoin you need to spend electricity. To mine MINT you need to spend some gas. The basic principle: <b>the more you have, the more you will get</b>. MINT can be added to any Ethereum Wallet because it is standard ERC20 token. <b>You must have at least 0.01% (better - 0.0101%) of all MINT to start mining or you will just spend gas!</b>
+              <h2>How is mining going?</h2>
+              Just press Mine MINT in our Online Wallet and get from 0 to 50000 MINT.
+              <h2>Why to buy MINT now?</h2>
+              To have more tokens and more chance to get tokens during mining.
+              <h2>How can I earn with MINT?</h2>
+              You can sell mined tokens on exchange.
             </Panel>
           </Col>
         </Row>
